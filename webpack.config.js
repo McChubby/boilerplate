@@ -2,7 +2,7 @@ let path = require('path')
 let nodeExternals = require('webpack-node-externals')
 let HtmlWebPackPlugin = require('html-webpack-plugin')
 const moduleObj = {
-  loaders: [
+  rules: [
     {
       test: /\.js$/,
       exclude: /node_modules/,
@@ -11,8 +11,9 @@ const moduleObj = {
   ]
 }
 const client = {
+  mode: "development",
   entry: {
-    'client': './src/client/index.js'
+    client: './src/client/index.js'
   },
   target: 'web',
   output: {
@@ -22,13 +23,14 @@ const client = {
   module: moduleObj,
   plugins: [
     new HtmlWebPackPlugin({
-      template: 'src/client/index.html'
+      template: './src/client/index.html'
     })
   ]
 };
 const server = {
+  mode: "development",
   entry: {
-    'server': './src/server/index.js'
+    server: './src/server/index.js'
   },
   target: 'node',
   output: {
@@ -38,4 +40,28 @@ const server = {
   module: moduleObj,
   externals: [nodeExternals()]
 };
-module.exports = [client, server];
+
+const rules = {
+  mode: "development",
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    host: 'dev.henk' ,
+    port: 9000,
+    hot: true
+  },
+  devtool: "eval",
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: ["source-map-loader"],
+        include: [
+          path.resolve(__dirname, 'dist')
+        ],
+        enforce: "pre"
+      }
+    ]
+  }
+}
+
+module.exports = [client, server, rules];

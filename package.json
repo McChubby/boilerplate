@@ -4,7 +4,8 @@
   "description": "Basic React Boilerplate",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "dev": "npm run build-babel && npm run build",
+    "build": "webpack --watch --progress --hide-modules",
     "build-babel": "npm run build-babel-server && npm run build-babel-client",
     "build-babel-server": "babel src/server --out-dir ./dist",
     "build-babel-client": "babel src/client --copy-files --out-dir ./dist/public",
@@ -33,7 +34,7 @@
     "express": "^4.16.3",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
-    "webpack": "^3.12.0"
+    "webpack": "^4.19.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -50,6 +51,8 @@
     "html-webpack-plugin": "^3.2.0",
     "jest": "^23.6.0",
     "react-test-renderer": "^16.5.1",
+    "source-map-loader": "^0.2.4",
+    "webpack-cli": "^3.1.0",
     "webpack-node-externals": "^1.7.2"
   }
 }
