@@ -1,12 +1,30 @@
 let path = require('path')
 let nodeExternals = require('webpack-node-externals')
 let HtmlWebPackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 const moduleObj = {
   rules: [
     {
       test: /\.js$/,
       exclude: /node_modules/,
       loaders: ["babel-loader"],
+    },
+    {
+      test: /\.js$/,
+      use: ["source-map-loader"],
+      include: [
+        path.resolve(__dirname, 'dist')
+      ],
+      enforce: "pre"
+    },
+    {
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract(
+        {
+          fallback: 'style-loader',
+          use: ['css-loader']
+        })
     }
   ]
 }
@@ -24,8 +42,15 @@ const client = {
   plugins: [
     new HtmlWebPackPlugin({
       template: './src/client/index.html'
-    })
-  ]
+    }),
+    new ExtractTextPlugin({
+      filename: './src/client/style.css'
+    }),
+  ],
+  devtool: "inline-source-map",
+  devServer: {
+    hot: true
+  },
 };
 const server = {
   mode: "development",
@@ -41,27 +66,4 @@ const server = {
   externals: [nodeExternals()]
 };
 
-const rules = {
-  mode: "development",
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    host: 'dev.henk' ,
-    port: 9000,
-    hot: true
-  },
-  devtool: "eval",
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        use: ["source-map-loader"],
-        include: [
-          path.resolve(__dirname, 'dist')
-        ],
-        enforce: "pre"
-      }
-    ]
-  }
-}
-
-module.exports = [client, server, rules];
+module.exports = [client, server];
